@@ -1,0 +1,601 @@
+\documentclass{beamer}
+
+\usepackage{color, colortbl}
+
+\mode<presentation>
+{
+    %\usetheme{AnnArbor}
+    %\usetheme{Antibes}
+    %\usetheme{Bergen}
+    %\usetheme{Berkeley}
+    %\usetheme{Berlin}
+    %\usetheme{Boadilla}
+    %\usetheme{CambridgeUS}
+    %\usetheme{Copenhagen}
+    %\usetheme{Darmstadt}
+    %\usetheme{Dresden}
+    %\usetheme{Frankfurt}
+    %\usetheme{Goettingen}
+    %\usetheme{Hannover}
+    %\usetheme{Ilmenau}
+    %\usetheme{JuanLesPins}
+    %\usetheme{Luebeck}
+    \usetheme{Madrid}
+    %\usetheme{Malmoe}
+    %\usetheme{Marburg}
+    %\usetheme{Montpellier}
+    %\usetheme{PaloAlto}
+    %\usetheme{Rochester}
+    %\usetheme{Singapore}            % maybe
+    %\usetheme{Szeged}
+    %\usetheme{Warsaw}
+    %\setbeamercovered{transparent}
+    \usecolortheme{seahorse}
+}
+
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.2\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+	  \usebeamerfont{author in head/foot}Martin Hru\v{s}ka
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.7\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}}%
+  \begin{beamercolorbox}[wd=.1\paperwidth,ht=2.25ex,dp=1ex,center]{date in head/foot}
+            \insertframenumber{} / \inserttotalframenumber 
+        \end{beamercolorbox}%
+  \vskip0pt%
+}
+
+\setbeamertemplate{itemize item}[square]
+\setbeamertemplate{itemize subitem}[triangle]
+\setbeamertemplate{itemize subsubitem}[circle]
+% \setbeamertemplate{enumerate item}[square]
+\setbeamertemplate{section in toc}[square]
+\setbeamertemplate{navigation symbols}{}
+
+\newenvironment{figure*}%
+{\begin{figure}}
+{\end{figure}}
+
+\usepackage{adjustbox}
+\usepackage{comment}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+%\usepackage{palatino}
+\usepackage{color}
+\usepackage{graphicx}
+%\usepackage{alltt}
+\usepackage{tikz}
+\usepackage{subcaption}
+%\usepackage{MnSymbol}
+%\usepackage{wasysym}
+\usepackage[nofillcomment,noend,linesnumbered,noline,oldcommands]{algorithm2e}
+\usetikzlibrary{calc,matrix,backgrounds,fit,shapes,arrows}
+
+\usetikzlibrary{arrows}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{calc}
+\usetikzlibrary{fit}
+\usetikzlibrary{decorations}
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{decorations.pathreplacing}
+
+\newcommand{\hlbl}[1]{\textcolor{blue}{#1}}
+\newcommand{\hlgr}[1]{\textcolor{olive!50!green}{#1}}
+\newcommand{\hlrd}[1]{\textcolor{red}{#1}}
+\newcommand{\hlye}[1]{\textcolor{magenta}{#1}}
+
+\newcommand{\todo}[1]{\hlbl{[TODO: #1]}} 
+\newcommand{\nt}[1]{\hlgr{[NOTE: #1]}} 
+
+\newcommand{\heap}{h}
+\newcommand{\heaps}{\mathcal{H}}
+\newcommand{\partrel}{\approx}
+\newcommand{\ta}{\mathit{TA}}
+\newcommand{\langof}[1]{\mathcal{L}(#1)}
+\definecolor{rowgray}{gray}{0.85}
+
+% for the table
+\newcommand{\safe}[0]{safe}
+\newcommand{\unsafe}[0]{error}
+
+\newcommand{\mytree}{%
+  \begin{tikzpicture}
+  [
+    scale=0.6,
+    transform shape
+  ]
+    \path[use as bounding box] (-2.4mm,0mm) rectangle (2.4mm,5mm);
+    %\draw (0mm,0mm) -- (0mm,5mm);
+    \filldraw (0mm,5mm) -- (-2mm,3mm) -- (0mm,4mm) -- (0mm,3.5mm) -- (-2mm,1.5mm) --
+    (0mm,2.5mm) -- (0mm,0.5mm) -- (0mm,2.5mm) -- (2mm,1.5mm) -- (0mm,3.5mm) --
+    (0mm,4mm) -- (2mm,3mm) -- cycle;
+  \end{tikzpicture}%
+}
+
+\newcommand{\dls}{
+  \begin{tikzpicture}
+  [
+    baseline,
+    anchor=base
+  ]
+    \node[draw,fill=blue!30,rectangle] {DLS};
+  \end{tikzpicture}
+}
+
+\newcommand{\greensmile}{\textcolor{olive!50!green}{\textbf{\smiley}}}
+\newcommand{\redfrown}{\textcolor{red}{\textbf{\frownie}}}
+
+\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
+
+% Subtitle all from paper title
+\title{
+ Counterexample Validation and Interpolation-Based
+Refinement for Forest Automata}
+\author[
+  Hol\'{i}k \and 
+  \textbf{\hlbl{Hru\v{s}ka}} \and
+  Leng\'{a}l \and
+  Rogalewicz \and
+  Vojnar~~~~~]
+{
+  Luk\'{a}\v{s} Hol\'{i}k \and 
+  \hlbl{\textbf{ Martin Hru\v{s}ka}} \and
+  Ond\v{r}ej~Leng\'{a}l \and
+  Adam~Rogalewicz\\ \and
+  Tom\'{a}\v{s}~Vojnar}
+
+\institute[BUT]{Brno University of Technology, Czech Republic\\[6mm]
+@VMCAI'17, Brno}
+
+
+\date{January 16, 2017}
+
+\begin{document}
+
+%REMOVE
+%\includeonlyframes{current}
+
+%*******************************************************************************
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+  \frametitle{Introduction}
+  \begin{itemize}
+	  \item Shape analysis using \hlbl{Forest Automata}
+	  \item Forest automata are tuples of (interconnected) tree automata
+	  \item Analysis of programs with dynamic data structures
+	  \item Ability to verify absence of:
+	  \begin{itemize}
+		  \item Reachability of an assertion break
+		  \item Null pointer dereference
+		  \item Memory leak
+		  \item Invalid free of a memory	
+	  \end{itemize}
+	  \item Derivation of shape invariants (represented by forest automata)
+	  \item Implemented in the \hlbl{Forester} tool -- analysis of C programs
+  \end{itemize}
+\end{frame}
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+  \frametitle{An Overview of Verification Method}
+   \begin{itemize}
+      \item Based on \hlbl{Abstract Regular Tree Model Checking} 
+		\begin{itemize}
+			\item Sets of program configurations are represented by automata
+			\item Employs abstraction over automata to overapproximate sets of~reachable configurations
+		\end{itemize}
+	   \item Employs \hlbl{CEGAR} to refine the abstraction over automata
+		   \begin{itemize}
+				\item Use backward run to validate counterexample
+				\item If a counterexample is spurious the abstraction is refined and the analysis restarted
+		   \end{itemize}
+	\item Advantages
+	   \begin{itemize}
+		 \item Generality of automata approach
+		 \item Precision of abstraction gained by the refinement\,--\,can capture (data) relations
+			 between nodes of memory structures
+		 \item Scalability??
+	   \end{itemize}
+  \end{itemize}
+\end{frame}
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Outline of the Talk}
+
+	\begin{enumerate}
+		\item Forest Automata based Shape Analysis
+		\item Counterexample Validation and Abstraction Refinement
+		\item Evaluation and Conclusion
+	\end{enumerate}
+
+\end{frame}
+
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{The main analysis algorithm}
+
+\begin{center}
+\scalebox{0.7}
+{
+	\begin{algorithm}[H]
+	\ForEach{Instruction $I$ in program}{
+		Execute $I$ in abstract domain of Forest Automata \;
+		\If{Execution of $I$ breaks a specification}{
+			Report an error and abort the analysis
+		}
+
+		\If{Execution is at a \hlrd{loop point}}{
+			\While{\hlrd{a fixpoint} has not been reached}{
+				Perform \hlrd{abstraction} over forest automata
+			}
+		}
+	}
+	\end{algorithm}
+}
+\end{center}
+
+\begin{itemize}
+	\item \hlgr{Needed ingredients:}
+	\begin{itemize}
+		\item \hlbl{Forest automata} to represent shapes of heap
+		\item \hlbl{Abstract transformers} modelling semantics of instruction
+		\item \hlbl{Abstraction} over forest automata $\rightarrow$ refinement
+	\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Forest Automata Encoding of Heap}
+
+	\begin{itemize}
+			\item A \hlbl{forest automaton} $F$ is a tuple of \hlgr{tree automata} together with a~mapping of program variable
+				to tree automata roots
+		    \item Formally, $F = (A_1,\ldots,A_n, \sigma)$ where $F$ is a forest automaton,\\
+				$A_i$ is a~tree automaton,
+				$\sigma$ is the mapping
+			\item A \hlgr{tree automaton} accepts \hlrd{trees}
+			\item \hlrd{Trees} can contain leaves referencing the roots of other trees
+			\item Encoded heap graphs obtained by connecting leaves with the~referenced roots
+			%\item \hlye{Cut-points} are nodes of heap referenced by a variable or nodes with more than one incoming edges.
+	\end{itemize}
+
+	\begin{center}
+	\tikzset{every picture/.style={scale=0.8}}%
+	\begin{figure*}
+		\begin{subfigure}{0.5\textwidth}
+			\centering
+			\input{figs/tree_decomp4.tikz}
+		\end{subfigure}%
+		\hspace{-0.3cm}
+		\begin{subfigure}{0.5\textwidth}
+			\centering
+			\input{figs/tree_decomp3.tikz}
+		\end{subfigure}
+	\end{figure*}
+	\end{center}
+
+\end{frame}
+
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Abstract Transformers for Forest Automata}
+
+	\begin{itemize}
+		\item \hlbl{\texttt{x := malloc()}}\,--\,When a new memory node is allocated, a new tree automaton $A$
+			is created and $x$ is mapped to $A$.
+		\item \hlbl{\texttt{x := y->next}}\,--\,A tree automaton pointed by $y$ is splitted at the state
+			pointed from the root over the \texttt{next} symbol.
+		\item \hlbl{\texttt{free(x)}}\,--\,A tree automaton pointed to by $x$ is removed from forest automaton
+			and all references to this automaton are changed to undefined.
+		\item \hlbl{\texttt{x == y}}\,--\,Check, if the variables point to the same tree automaton.
+		\item $\ldots$ \hlrd{Pictures, formalization?}
+	\end{itemize}
+
+\end{frame}
+
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Boxes}
+
+\begin{itemize}
+		\item We use \hlbl{boxes} to extend expressive power of forest automata
+		\item A box is a forest automaton that can be used as a symbol of another forest automaton
+		\item A box represents repeating subgraphs of a heap
+		\item FA havin boxes in alphabet are called \hlbl{hirerarchical}
+	\end{itemize}
+		\vspace{-0.8cm}
+		\centering \input{figs/dll_decomp2.tikz}\\
+		\vspace{0.7cm}
+		\centering DLS $=$ \input{figs/dll_box.tikz}\\
+		\vspace{-0.8cm}
+		\centering \input{figs/dll_decomp_aut.tikz}
+\end{frame}
+
+%*******************************************************************************
+
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Abstraction}
+
+	\begin{itemize}
+		\item To represent infinite state spaces and to speed up the analysis
+		\item Merges states in the same equivalence class of
+			an equivalnece relation
+		\item \hlbl{Height Abstraction}
+		\begin{itemize}
+			\item States are equivalent if they have same languages w.r.t. a given height.
+				\hlgr{$q_1 \sim q_2 \Leftrightarrow L^n(q_1) = L^n(q_2)$} where $L^n(q)$ is
+				a language of tree accepted from the state $q$ with height up to $n$
+			\item Can be refined only by increasing the height
+			\item Refinement does not exclude counterexample
+		\end{itemize}
+
+	    \item \hlbl{Predicate Abstraction}
+		\begin{itemize}
+			\item Consider a set of predicates $\{p_1,\ldots,p_n\}$ represented by tree automata,
+				equivalence is defined as \hlgr{$q_1 \sim q_2 \Leftrightarrow L(q_1) \cap p_i \leftrightarrow L(q_2) \cap p_i$}
+				where $1 \leq i \leq n$
+			\item Refining predicates interpolated from a spurious counterexample
+			\item Refinement excludeds a path to spurious CE
+		\end{itemize}
+	\end{itemize}
+
+
+\end{frame}
+
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{CEGAR in Forest Automata Based Shape Analysis}
+	\begin{center}
+	\scalebox{0.7}
+	{
+
+		\begin{algorithm}[H]
+			\caption{CEGAR loop}
+			Perform a forward run
+			\If{A counterexample (CE) is found}{
+				Start backward to validate CE\
+				\If{CE is spuirous}{
+					Derive predicates to refine abstraction\
+					GOTO line 1
+				}
+				\Else{
+					Report a real CE
+				}
+			}
+			\Else{
+				Report that program is correct
+			}
+		\end{algorithm}
+	}
+	\end{center}
+	% \begin{itemize}
+	% 	\item Inspired by \hlbl{counterexample-guided refinement in the abstract
+	% 		regular model checking} 
+	% 	\item In Figure, the arrow represents the abstract transformers applied
+	% 		in forward run, the dashed arrows are their (precise) reversion
+	% 		in backward run
+	% 	\item Green areas are sets of reachable shapes before abstraction, the yellow
+	% 		ones after abstraction.
+	% 	\item Red area is a set of shapes causing an error, orange areas are intersections
+	% 		of automata from forward and backward run.
+	% \end{itemize}
+
+	
+	\begin{figure}
+		\centering
+		\includegraphics[scale=0.2]{artmc.png}
+	\end{figure}
+
+\end{frame}
+
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Running Backwards to Validate Counterexample}
+
+	\begin{itemize}
+		\item We need following ingredients to perform backward run correctly:
+		\begin{itemize}
+			\item Reversion of abstract transformation
+			\item Reversion of folding and unfolding boxes
+			\item Reversion of abstraction $\leftarrow$ intersection of forest automata
+				from backward run
+		\end{itemize}
+	\end{itemize}
+
+\end{frame}
+
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Reverting Abstract Transformers}
+	\hlrd{Reversing forward run transformations}
+	\begin{itemize}
+		\item \hlbl{\texttt{x := malloc()}}\,--\,Removing created TA in forward run from FA
+		\item \hlbl{\texttt{x := y->next}}\,--\,The $x$ variable is mapped to the value it has
+			before this operation in forward run
+		\item \hlbl{\texttt{free(x)}}\,--\,Removed TA in forward run is returned to FA
+		\item \hlbl{\texttt{x == y}}\,--\,Has no reverse semantics.
+	\end{itemize}
+
+	\hlrd{Folding and unfolding of boxes}
+	\begin{itemize}
+		\item Reverting \hlbl{folding} of boxes by unfolding the box
+			in backward run
+		\item Reverting \hlbl{unfolding} of boxes by folding the box
+			in backward
+		\item By correct reverting we get so called \hlbl{compatible form}
+			enabeling simplier bottom-up intersection of forest automata
+	\end{itemize}
+
+\end{frame}
+
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Intersection of Forest Automata}
+	\begin{itemize}
+		\item To revert an abstraction performed over forest automaton we need
+			to perform forest automata intersection in backward run
+		\item \hlbl{Input:} FA \hlrd{$F_F=(A_1, \ldots, A_n, \sigma)$} from
+			forward run before abstraction, FA \hlrd{$F_B=(B_1,\ldots, B_n, \sigma)$}
+			from the backward run in this abstraction point
+		\item \hlbl{Preconditions:}
+			\begin{itemize}
+				\item Automata have same number of TA with the same boxes in the corresponding transitions\,---\,
+				guaranteed by \hlrd{compatible form}
+				\item Both FA have same $\sigma$\,---\,reversion of all operations precisely
+			\end{itemize}
+
+		\item \hlbl{Method:}
+			\begin{itemize}
+				\item Perform the intersection \hlrd{component-wise: $F_F \cap F_B = (A_1 \cap A_n,\ldots,A_n\cap B_n, \sigma)$}
+				\item When TA intersection reaches boxes in the transitions of both automata it calls the whole
+					procedure for \hlrd{FA intersection recursively on the boxes} and uses its results as a new box
+				\item If the intersection automaton has an empty language, derive predicates and restart the analysis.
+					Otherwise, continue in backward run. 
+			\end{itemize}
+	\end{itemize}
+\end{frame}
+
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Predicates Derivation for Abatraction Refinement}
+
+	\begin{itemize}
+		\item Recall $F_A$ and $F_B$ from the previous slide
+		\item When the intersection of FA is empty, the new predicates are derived
+			from the FA $F_B$ of backward run
+		\item Predicates are represented TA of $F_B$ such that \hlbl{TA $B_i$ is added
+			to set of predicates $F_A$ if TA $A_i \cap B_i$ has an empty language}
+		\item Refinement guarantees that the spurious counterexample will not
+			be reached again with the same path
+	\end{itemize}
+
+\end{frame}
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Experimental Evaluation}
+
+	\begin{center}
+	\hlbl{Results of experiments}
+	\\~\\
+	\begin{adjustbox}{max height=\textheight, max width=\textwidth}
+	%\tiny
+	%\caption{Results of experiments.}
+	\begin{tabular}{| l | l | r | r | r | r || l | l | r | r | r | r | r |}
+        \hline
+		Program & Status & LoC & Time [s] & Refnm& Preds & Program & Status & LoC & Time [s] & Refnm & Preds \\
+        \hline
+        \hline
+		SLL (delete) & \safe & $33$ & $0.02$ &  $0$ & $0$ & DLL (rev) & \safe & $39$ &  $0.70$ & $0$  & $0$ \\
+        \hline
+		SLL (bubblesort) & \safe & $42$ & $0.02$ &  $0$ & $0$ & CDLL & \safe & $32$ &  $0.02$  & $0$  & $0$ \\
+        \hline
+		SLL (insersort) & \safe & $36$ & $0.04$ & $0$ & $0$ & DLL (insersort) & \safe & $42$ &  $0.56$  & $0$  & $0$ \\
+        \hline
+		SLLOfCSLL & \safe & $47$ & $0.02$ & $0$ & $0$ & DLLOfCDLL & \safe & $54$ &  $1.76$  & $0$  & $0$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{SLL01}    & \safe & $70$ & $1.20$   &  $1$ & $1$ & \textbf{DLL01} & \safe & $73$ &  $0.65$  & $2$  & $2$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{CircularSLL} & \safe & $49$ & $3.57$   &  $3$  & $3$ & \textbf{CircularDLL} & \safe  & $52$ &  $37.22$ & $18$ & $24$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{OptPtrSLL}   & \safe & $59$ & $1.90$ & $3$ & $3$ & \textbf{OptPtrDLL} & \safe & $62$ &  $1.87$  & $5$ & $5$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{QueueSLL}    & \safe & $71$ & $11.32$  &  $10$ & $10$ & \textbf{QueueDLL} & \safe  & $74$ &  $44.68$ & $14$ & $14$ \\
+		\rowcolor{rowgray}
+        \hline
+		\textbf{GBSLL}       & \safe & $64$ & $0.84$   &  $3$ & $3$ & \textbf{GBDLL} & \safe & $71$ &  $1.89$  & $4$ & $4$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{GBSLLSent}   & \safe  & $68$ & $0.85$   &  $3$ & $3$ & \textbf{GBDLLSent} & \safe & $75$ &  $2.19$  & $4$ & $4$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{RGSLL}       & \safe & $72$ & $14.41$  &  $22$  & $38$ & \textbf{RGDLL} & \safe & $76$ &  $78.76$ & $26$ & $26$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{WBSLL}       & \safe & $62$ & $0.84$   &  $5$  & $5$ & \textbf{WBDLL} & \safe & $71$ &  $1.37$  & $7$ & $7$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{SortedSLL}   & \safe & $76$ & $227.12$ &  $15$ & $15$ & \textbf{SortedDLL} & \safe & $82$ &  $36.67$ & $11$ & $11$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{EndSLL}      & \safe  & $45$ & $0.07$   &  $2$  & $2$ & \textbf{EndDLL} & \safe & $49$ &  $0.10$  & $3$ & $3$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{TreeRB} & \unsafe & $130$ &  $0.08$  & $0$  & $0$ & \textbf{TreeWB} & \unsafe & $125$ &  $0.05$  & $0$ & $0$ \\
+        \hline
+		TreeCnstr & \safe & $52$ & $0.31$  & $0$  & $0$ & \cellcolor{rowgray}\textbf{TreeCnstr} & \cellcolor{rowgray}\unsafe & \cellcolor{rowgray} $52$ & \cellcolor{rowgray} $0.03$  & \cellcolor{rowgray} $0$ & \cellcolor{rowgray} $0$ \\
+        \hline
+		TreeOfCSLL & \safe & $109$ &  $0.57$  & $0$  & $0$ & \cellcolor{rowgray}\textbf{TreeOfCSLL}  & \cellcolor{rowgray}\unsafe & \cellcolor{rowgray} $109$ & \cellcolor{rowgray} $0.56$  & \cellcolor{rowgray} $1$ & \cellcolor{rowgray} $3$ \\
+        \hline
+		TreeStack & \safe & $58$ &  $0.20$  & $0$  & $0$ & \cellcolor{rowgray}\textbf{TreeStack} & \cellcolor{rowgray}\unsafe & \cellcolor{rowgray} $58$ & \cellcolor{rowgray} $0.01$  & \cellcolor{rowgray} $0$ & \cellcolor{rowgray} $0$ \\
+        \hline
+		TreeDsw   & \safe & $72$ & $1.87$  & $0$  & $0$ & \cellcolor{rowgray}\textbf{TreeDsw} & \cellcolor{rowgray}\unsafe & \cellcolor{rowgray} $72$ & \cellcolor{rowgray} $0.02$  & \cellcolor{rowgray} $0$ &  \cellcolor{rowgray} $0$ \\
+		\hline
+		TreeRootPtr & \safe & $62$ &  $1.43$  & $0$  &  $0$ & \cellcolor{rowgray}\textbf{TreeRootPtr} & \cellcolor{rowgray}\unsafe & \cellcolor{rowgray} $62$ & \cellcolor{rowgray} $0.17$  & \cellcolor{rowgray} $2$ & \cellcolor{rowgray} $6$\\
+        \hline
+		SkipList    & \safe & $84$ & $3.36$  & $0$  & $0$ & \cellcolor{rowgray}\textbf{SkipList} & \cellcolor{rowgray}\unsafe & $\cellcolor{rowgray} 84$ & \cellcolor{rowgray} $0.08$  & \cellcolor{rowgray} $1$  & \cellcolor{rowgray} $1$ \\
+        \hline
+		% SkipList-3nd    & $97$ & $0.17$  & $1$  & N & x & $1$ & & & & & & & \\
+        % \hline
+	\end{tabular}
+	\label{tab:times}
+	\end{adjustbox}	
+  % \vspace{-4mm}
+  % \vspace{-8mm}
+%\end{table}
+	\end{center}
+
+\end{frame}
+%*******************************************************************************
+
+%*******************************************************************************
+
+\begin{frame}
+  \frametitle{Conclusions}
+
+  \begin{itemize}
+	  \item Newly added backward run and predicate abstraction
+  \end{itemize}
+
+\end{frame}
+
+\end{document}
