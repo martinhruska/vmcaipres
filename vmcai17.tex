@@ -170,17 +170,17 @@ Refinement for Forest Automata}
   \frametitle{Introduction}
   \begin{itemize}
 	  \item Shape analysis using \hlbl{Forest Automata}
-	  \item Forest automata are tuples of (interconnected) tree automata
-	  \item Analysis of programs with dynamic data structures
-	  \item Ability to verify absence of:
+		  (tuples of tree automata)
+	  \item Analysis of programs with \hlbl{complex} dynamic data structures
 	  \begin{itemize}
-		  \item Reachability of an assertion break
-		  \item Null pointer dereference
-		  \item Memory leak
-		  \item Invalid free of a memory	
+		  \item tree sturctures
+		  \item nested structures (linked lists with nested linked lists)
+		  \item \hlbl{structures with properties (contribution of this work)}
 	  \end{itemize}
-	  \item Derivation of shape invariants (represented by forest automata)
-	  \item Implemented in the \hlbl{Forester} tool -- analysis of C programs
+	  \item \hlbl{Verifying properties} such as
+		  reachability of~error state and absence of~null pointer dereference,
+		  memory leak, or invalid free of a~memory
+	  \item Implemented in the \hlbl{Forester} tool\,---\,analysis of C programs
   \end{itemize}
 \end{frame}
 %*******************************************************************************
@@ -196,14 +196,13 @@ Refinement for Forest Automata}
 		\end{itemize}
 	   \item Employs \hlbl{CEGAR} to refine the abstraction over automata
 		   \begin{itemize}
-				\item Use backward run to validate counterexample
-				\item If a counterexample is spurious the abstraction is refined and the analysis restarted
+			    \item Backward run for validation of counterexample (CE)
+				\item Refinement of abstraction to avoid spurious CE
 		   \end{itemize}
-	\item Advantages
+	   \item \hlgr{Advantages}
 	   \begin{itemize}
-		 \item Generality of automata approach
-		 \item Precision of abstraction gained by the refinement\,--\,can capture (data) relations
-			 between nodes of memory structures
+		 \item Generality of automata
+		 \item Powerful and precise (thanks to refinement) abstraction
 		 \item Scalability??
 	   \end{itemize}
   \end{itemize}
@@ -233,14 +232,14 @@ Refinement for Forest Automata}
 {
 	\begin{algorithm}[H]
 	\ForEach{Instruction $I$ in program}{
-		Execute $I$ in abstract domain of Forest Automata \;
+		Execute $I$ in abstract domain of Forest Automata\;
 		\If{Execution of $I$ breaks a specification}{
-			Report an error and abort the analysis
+			Report an error and abort the analysis\;
 		}
 
-		\If{Execution is at a \hlrd{loop point}}{
-			\While{\hlrd{a fixpoint} has not been reached}{
-				Perform \hlrd{abstraction} over forest automata
+		\If{Instruction is at a \hlrd{loop point}}{
+			\While{\hlrd{fixpoint} has not been reached}{
+				Perform \hlrd{abstraction} over forest automata\;
 			}
 		}
 	}
@@ -266,8 +265,8 @@ Refinement for Forest Automata}
 \frametitle{Forest Automata Encoding of Heap}
 
 	\begin{itemize}
-			\item A \hlbl{forest automaton} $F$ is a tuple of \hlgr{tree automata} together with a~mapping of program variable
-				to tree automata roots
+			\item A \hlbl{forest automaton} $F$ is a tuple of \hlgr{tree automata}
+				together with a~mapping of program variables to tree automata roots
 		    \item Formally, $F = (A_1,\ldots,A_n, \sigma)$ where $F$ is a forest automaton,\\
 				$A_i$ is a~tree automaton,
 				$\sigma$ is the mapping
@@ -301,12 +300,13 @@ Refinement for Forest Automata}
 \frametitle{Abstract Transformers for Forest Automata}
 
 	\begin{itemize}
-		\item \hlbl{\texttt{x := malloc()}}\,--\,When a new memory node is allocated, a new tree automaton $A$
-			is created and $x$ is mapped to $A$.
+		\item \hlbl{\texttt{x := malloc()}}\,--\,On memory allocation allocation, a new tree automaton $A$
+			is created, added to FA and $x$ is mapped to $A$
 		\item \hlbl{\texttt{x := y->next}}\,--\,A tree automaton pointed by $y$ is splitted at the state
-			pointed from the root over the \texttt{next} symbol.
-		\item \hlbl{\texttt{free(x)}}\,--\,A tree automaton pointed to by $x$ is removed from forest automaton
-			and all references to this automaton are changed to undefined.
+			pointed from the root over the \texttt{next} symbol. The $x$ variable is mapped to the newly
+			created automaton by this splitting.
+		\item \hlbl{\texttt{free(x)}}\,--\,A tree automaton pointed by $x$ is removed from forest automaton
+			and all references to it are changed to undefined
 		\item \hlbl{\texttt{x == y}}\,--\,Check, if the variables point to the same tree automaton.
 		\item $\ldots$ \hlrd{Pictures, formalization?}
 	\end{itemize}
@@ -323,7 +323,7 @@ Refinement for Forest Automata}
 		\item We use \hlbl{boxes} to extend expressive power of forest automata
 		\item A box is a forest automaton that can be used as a symbol of another forest automaton
 		\item A box represents repeating subgraphs of a heap
-		\item FA havin boxes in alphabet are called \hlbl{hirerarchical}
+		\item FA having boxes in alphabet are called \hlbl{hirerarchical}
 	\end{itemize}
 		\vspace{-0.8cm}
 		\centering \input{figs/dll_decomp2.tikz}\\
@@ -341,25 +341,24 @@ Refinement for Forest Automata}
 \frametitle{Abstraction}
 
 	\begin{itemize}
-		\item To represent infinite state spaces and to speed up the analysis
-		\item Merges states in the same equivalence class of
-			an equivalnece relation
-		\item \hlbl{Height Abstraction}
+		\item Representing infinite state spaces and speed up the analysis
+		\item Merges states in the same equivalence class
+		\item \hlgr{Height Abstraction}
 		\begin{itemize}
-			\item States are equivalent if they have same languages w.r.t. a given height.
-				\hlgr{$q_1 \sim q_2 \Leftrightarrow L^n(q_1) = L^n(q_2)$} where $L^n(q)$ is
-				a language of tree accepted from the state $q$ with height up to $n$
-			\item Can be refined only by increasing the height
-			\item Refinement does not exclude counterexample
+			\item States \hlbl{$q_1$ and $q_2$ are equivalent},
+				iff \hlrd{$L^n(q_1) = L^n(q_2)$} where $L^n(q)$ is
+				a~language of tree accepted from the state $q$ with height up to $n$
+			\item \hlbl{Refinement}: By increasing the height
+			\item \hlbl{Exclusion of CE}: No
 		\end{itemize}
 
-	    \item \hlbl{Predicate Abstraction}
+	    \item \hlgr{Predicate Abstraction}
 		\begin{itemize}
 			\item Consider a set of predicates $\{p_1,\ldots,p_n\}$ represented by tree automata,
-				equivalence is defined as \hlgr{$q_1 \sim q_2 \Leftrightarrow L(q_1) \cap p_i \leftrightarrow L(q_2) \cap p_i$}
+				equivalence is defined as \hlrd{$q_1 \sim q_2 \Leftrightarrow L(q_1) \cap p_i \leftrightarrow L(q_2) \cap p_i$}
 				where $1 \leq i \leq n$
-			\item Refining predicates interpolated from a spurious counterexample
-			\item Refinement excludeds a path to spurious CE
+			\item \hlbl{Refinement}: Interpolating predicates from CE
+			\item \hlbl{Exclusion of CE}: Yes
 		\end{itemize}
 	\end{itemize}
 
@@ -370,27 +369,27 @@ Refinement for Forest Automata}
 
 %*******************************************************************************
 \begin{frame}
-\frametitle{CEGAR in Forest Automata Based Shape Analysis}
+	\frametitle{Counterexample-guided Refinement of Abstraction}
 	\begin{center}
 	\scalebox{0.7}
 	{
 
 		\begin{algorithm}[H]
-			\caption{CEGAR loop}
-			Perform a forward run
+			Perform a \hlbl{forward run}\;
 			\If{A counterexample (CE) is found}{
-				Start backward to validate CE\
+				Start \hlbl{backward run} to validate CE\;
 				\If{CE is spuirous}{
-					Derive predicates to refine abstraction\
-					GOTO line 1
+					Derive predicates to \hlbl{Refine abstraction}\;
+					\textbf{GOTO} Line 1\;
 				}
 				\Else{
-					Report a real CE
+					Report a real CE\;
 				}
 			}
 			\Else{
-				Report that program is correct
+				Report that program is correct\;
 			}
+			\hlgr{\caption{CEGAR loop}}
 		\end{algorithm}
 	}
 	\end{center}
@@ -418,12 +417,18 @@ Refinement for Forest Automata}
 
 %*******************************************************************************
 \begin{frame}
-\frametitle{Running Backwards to Validate Counterexample}
+\frametitle{Counterexample-guided Refinement of Abstraction}
 
 	\begin{itemize}
-		\item We need following ingredients to perform backward run correctly:
+		\item \hlgr{Ingredients for CEGAR}
 		\begin{itemize}
-			\item Reversion of abstract transformation
+			\item Forward run (already described)
+			\item Backward run
+			\item Abstraction refinement
+		\end{itemize}
+		\item \hlgr{Ingredients for backward run}:
+		\begin{itemize}
+			\item Reversion of abstract transformations
 			\item Reversion of folding and unfolding boxes
 			\item Reversion of abstraction $\leftarrow$ intersection of forest automata
 				from backward run
@@ -464,23 +469,24 @@ Refinement for Forest Automata}
 \begin{frame}
 \frametitle{Intersection of Forest Automata}
 	\begin{itemize}
-		\item To revert an abstraction performed over forest automaton we need
-			to perform forest automata intersection in backward run
-		\item \hlbl{Input:} FA \hlrd{$F_F=(A_1, \ldots, A_n, \sigma)$} from
-			forward run before abstraction, FA \hlrd{$F_B=(B_1,\ldots, B_n, \sigma)$}
-			from the backward run in this abstraction point
-		\item \hlbl{Preconditions:}
+		\item Reverting abstraction over forest automaton
+		\item \hlgr{Input:}
 			\begin{itemize}
-				\item Automata have same number of TA with the same boxes in the corresponding transitions\,---\,
-				guaranteed by \hlrd{compatible form}
+				\item FA \hlrd{$F_F=(A_1, \ldots, A_n, \sigma)$} from forward run before abstraction
+			    \item FA \hlrd{$F_B=(B_1,\ldots, B_n, \sigma)$} from the backward run in the abstraction point
+			\end{itemize}
+		\item \hlgr{Preconditions:}
+			\begin{itemize}
+				\item Automata are in so called \hlbl{compatible form}\,---\,they
+					have same number of TA with the same boxes in the corresponding transitions 
 				\item Both FA have same $\sigma$\,---\,reversion of all operations precisely
 			\end{itemize}
 
-		\item \hlbl{Method:}
+		\item \hlgr{Method:}
 			\begin{itemize}
-				\item Perform the intersection \hlrd{component-wise: $F_F \cap F_B = (A_1 \cap A_n,\ldots,A_n\cap B_n, \sigma)$}
+				\item Perform the intersection \hlbl{component-wise:} \hlrd{$F_F \cap F_B = (A_1 \cap A_n,\ldots,A_n\cap B_n, \sigma)$}
 				\item When TA intersection reaches boxes in the transitions of both automata it calls the whole
-					procedure for \hlrd{FA intersection recursively on the boxes} and uses its results as a new box
+					procedure for \hlbl{FA intersection recursively on the boxes} and uses its results as a new box
 				\item If the intersection automaton has an empty language, derive predicates and restart the analysis.
 					Otherwise, continue in backward run. 
 			\end{itemize}
@@ -593,9 +599,17 @@ Refinement for Forest Automata}
   \frametitle{Conclusions}
 
   \begin{itemize}
-	  \item Newly added backward run and predicate abstraction
+	  \item \hlbl{Contribution:} Enable analysis of a new class of data structures\,---\,with relation
+		  between nodes
+		\item Designed backward run and predicate analysis for shape analysis based on forest automata 
+		\item Designed compatible form and intersection of forest automata
+		\item Experimentally evaluated on number of test cases
+		\item \hlgr{Future work:}
+			\begin{itemize}
+				\item Find out reasons of state explosions on complicated tree structures
+				\item Save Forest(er)!
+			\end{itemize}
   \end{itemize}
-
 \end{frame}
 
 \end{document}
