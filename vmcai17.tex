@@ -172,7 +172,7 @@ Refinement for Forest Automata}
 \begin{frame}
   \frametitle{Introduction}
   \begin{itemize}
-	  \item Shape analysis using \hlbl{Forest Automata (FA})
+	  \item Shape analysis using \hlbl{Forest Automata (FA)}
 		  (tuples of tree automata)
 		  \begin{itemize}
 			\item Reasoning about programs with dynamic linked data structures
@@ -207,24 +207,27 @@ Refinement for Forest Automata}
 \begin{frame}
   \frametitle{An Overview of Verification Method}
    \begin{itemize}
-	   \item Based on \hlbl{Abstract Regular Tree Model Checking (ARTMC)} 
+	   \item Based on \hlbl{Abstract Regular Tree Model Checking (ARTMC) and CEGAR} 
 		\begin{itemize}
 			\item Sets of program configurations are represented by automata
-			\item Starts with an automaton representing initial configuration
-			\item Applying a transducer modelling behaviour of system until a fixpoint is reached
-			\item Employs \hlbl{abstraction} over automata to overapproximate sets of~reachable configurations
-				after each application of transducer
-			\item Make intersection of fixpoint automaton with automaton representing bad behaviour and
-				checks emptiness of its language
+	%		\item Starts with an automaton representing initial configuration
+	%		\item Applying a transducer modelling behaviour of system until a fixpoint is reached
+	%		\item Employs \hlbl{abstraction} over automata to overapproximate sets of~reachable configurations
+	%			after each application of transducer
+	%		\item Make intersection of fixpoint automaton with automaton representing bad behaviour and
+	%			checks emptiness of its language
 		\end{itemize}
-		\pause
-	   \item Employs \hlbl{CEGAR} to refine abstraction over automata
-		   \begin{itemize}
-			    \item Forward run with abstraction
-			    \item Backward run for validation of counterexample (CE)
-				\item Refinement of abstraction to avoid spurious CE
-		   \end{itemize}
-		\pause
+	%	\pause
+	%   \item Employs \hlbl{CEGAR} to refine abstraction over automata
+	%	   \begin{itemize}
+	%		    \item Forward run with abstraction
+	%		    \item Backward run for validation of counterexample (CE)
+	%			\item Refinement of abstraction to avoid spurious CE
+	%	   \end{itemize}
+	%	\pause
+	   \vspace{0.2cm}
+	   \includegraphics[scale=0.26]{artmc.png}
+		   \pause
 	   \item CEGAR applied to ARTMC, but not to FA
 		   based shape analysis $\rightarrow$ \hlrd{contribution} of this work
   \end{itemize}
@@ -432,7 +435,7 @@ Refinement for Forest Automata}
 					\item They have same number of TA
 					\item \hlbl{The same subgraphs are folded into the same boxes}
 				\end{itemize}
-				\item Compatible form is preserverd during backward run
+				\item Compatible form is preserved during backward run
 			\end{itemize}
 
 	\begin{center}
