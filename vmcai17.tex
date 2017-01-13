@@ -149,7 +149,7 @@ Refinement for Forest Automata}
   Tom\'{a}\v{s}~Vojnar}
 
 \institute[BUT]{Brno University of Technology, Czech Republic\\[6mm]
-@VMCAI'17, Brno}
+@VMCAI'17, Paris}
 
 
 \date{January 16, 2017}
@@ -173,14 +173,21 @@ Refinement for Forest Automata}
 		  (tuples of tree automata)
 	  \item Analysis of programs with \hlbl{complex} dynamic data structures
 	  \begin{itemize}
-		  \item tree sturctures
+		  \item tree structures
 		  \item nested structures (linked lists with nested linked lists)
 		  \item \hlbl{structures with properties (contribution of this work)}
 	  \end{itemize}
 	  \item \hlbl{Verifying properties} such as
-		  reachability of~error state and absence of~null pointer dereference,
-		  memory leak, or invalid free of a~memory
+		  reachability of~an error state and absence of~null pointer dereference,
+		  memory leak, or invalid free
 	  \item Implemented in the \hlbl{Forester} tool\,---\,analysis of C programs
+	  \item \hlgr{Advantages}
+	   \begin{itemize}
+		 \item Generality of automata
+		 \item Powerful and precise (thanks to refinement) abstraction
+		 \item Scalability
+	   \end{itemize}
+
   \end{itemize}
 \end{frame}
 %*******************************************************************************
@@ -189,22 +196,26 @@ Refinement for Forest Automata}
 \begin{frame}
   \frametitle{An Overview of Verification Method}
    \begin{itemize}
-      \item Based on \hlbl{Abstract Regular Tree Model Checking} 
+	   \item Based on \hlbl{Abstract Regular Tree Model Checking (ARTMC)} 
 		\begin{itemize}
 			\item Sets of program configurations are represented by automata
-			\item Employs abstraction over automata to overapproximate sets of~reachable configurations
+			\item Starts with an automaton representing initial configuration
+			\item Applying a transducer modelling behaviour of system until a fixpoint is reached
+			\item Employs \hlbl{abstraction} over automata to overapproximate sets of~reachable configurations
+				after each application of transducer
+			\item Make intersection of fixpoint automaton with automaton representing bad behaviour and
+				checks emptiness of its language
 		\end{itemize}
-	   \item Employs \hlbl{CEGAR} to refine the abstraction over automata
+		\pause
+	   \item Employs \hlbl{CEGAR} to refine abstraction over automata
 		   \begin{itemize}
+			    \item Forward run with abstraction
 			    \item Backward run for validation of counterexample (CE)
 				\item Refinement of abstraction to avoid spurious CE
 		   \end{itemize}
-	   \item \hlgr{Advantages}
-	   \begin{itemize}
-		 \item Generality of automata
-		 \item Powerful and precise (thanks to refinement) abstraction
-		 \item Scalability??
-	   \end{itemize}
+		\pause
+	   \item CEGAR applied to ARTMC, but not to forest automata
+		   based shape analysis $\rightarrow$ \hlrd{contribution} of this work
   \end{itemize}
 \end{frame}
 %*******************************************************************************
@@ -214,14 +225,305 @@ Refinement for Forest Automata}
 \frametitle{Outline of the Talk}
 
 	\begin{enumerate}
+		\item Example
 		\item Forest Automata based Shape Analysis
-		\item Counterexample Validation and Abstraction Refinement
 		\item Evaluation and Conclusion
 	\end{enumerate}
 
 \end{frame}
 
 %*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+% \begin{frame}[label=current]
+  \frametitle{Example}
+  \begin{overlayarea}{7cm}{6.5cm}
+      \only<1>{\includegraphics[scale=0.5]{ex/vmcai_1.pdf}}
+      \only<2>{\includegraphics[scale=0.5]{ex/vmcai_2.pdf}}
+      \only<3>{\includegraphics[scale=0.5]{ex/vmcai_3.pdf}}
+      \only<4>{\includegraphics[scale=0.5]{ex/vmcai_4.pdf}}
+      \only<5>{\includegraphics[scale=0.5]{ex/vmcai_5.pdf}}
+      \only<6>{\includegraphics[scale=0.5]{ex/vmcai_6.pdf}}
+      \only<7>{\includegraphics[scale=0.5]{ex/vmcai_7.pdf}}
+      \only<8>{\includegraphics[scale=0.5]{ex/vmcai_8.pdf}}
+      \only<9>{\includegraphics[scale=0.5]{ex/vmcai_9.pdf}}
+      \only<10>{\includegraphics[scale=0.5]{ex/vmcai_10.pdf}}
+      \only<11>{\includegraphics[scale=0.5]{ex/vmcai_11.pdf}}
+      \only<12>{\includegraphics[scale=0.5]{ex/vmcai_12.pdf}}
+      \only<13>{\includegraphics[scale=0.5]{ex/vmcai_13.pdf}}
+      \only<14>{\includegraphics[scale=0.5]{ex/vmcai_14.pdf}}
+      \only<15>{\includegraphics[scale=0.5]{ex/vmcai_15.pdf}}
+      \only<16>{\includegraphics[scale=0.5]{ex/vmcai_16.pdf}}
+      \only<17>{\includegraphics[scale=0.5]{ex/vmcai_17.pdf}}
+      \only<18>{\includegraphics[scale=0.5]{ex/vmcai_18.pdf}}
+      \only<19>{\includegraphics[scale=0.5]{ex/vmcai_19.pdf}}
+	  \only<20>{\includegraphics[scale=0.5]{ex/vmcai_20.pdf}}
+	  \only<21>{\includegraphics[scale=0.5]{ex/vmcai_21.pdf}}
+      \only<22>{\includegraphics[scale=0.5]{ex/vmcai_22.pdf}}
+      \only<23>{\includegraphics[scale=0.5]{ex/vmcai_23.pdf}}
+      \only<24>{\includegraphics[scale=0.5]{ex/vmcai_24.pdf}}
+      \only<25>{\includegraphics[scale=0.5]{ex/vmcai_25.pdf}}
+    \end{overlayarea}
+\end{frame}
+
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Forest Automata Encoding of Heap}
+
+	\begin{itemize}
+			\item A \hlbl{forest automaton} $F$ is a tuple of \hlgr{tree automata}
+				together with a~mapping of program variables to tree automata roots
+				\pause
+			\item A \hlgr{tree automaton} accepts \hlrd{trees}
+				\pause
+			\item \hlrd{Trees} can contain leaves referencing the roots of other trees
+				\pause
+			\item Encoded heap graphs obtained by connecting leaves with the~referenced roots
+				\pause
+			%\item \hlye{Cut-points} are nodes of heap referenced by a variable or nodes with more than one incoming edges.
+	\end{itemize}
+
+	\begin{center}
+	\tikzset{every picture/.style={scale=0.8}}%
+	\begin{figure*}
+		\begin{subfigure}{0.5\textwidth}
+			\centering
+			\input{figs/tree_decomp4.tikz}
+		\end{subfigure}%
+		\hspace{-0.3cm}
+		\begin{subfigure}{0.5\textwidth}
+			\centering
+			\input{figs/tree_decomp3.tikz}
+		\end{subfigure}
+	\end{figure*}
+	\end{center}
+
+\end{frame}
+
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Abstraction}
+
+	\begin{itemize}
+		\item Overapproximates reachable configurations and accelerates analysis
+		\item Collapses states in the same equivalence class of \hlrd{a relation $\sim$}
+		\item \hlgr{Height Abstraction}
+		\begin{itemize}
+			\item Consider states $q_1, q_2$, equivalence $\sim_H$ is defined as
+				\hlrd{$$q_1 \sim_H q_2 \stackrel{DEF}{\equiv} L^n(q_1) = L^n(q_2)$$}\noindent where
+				\hlrd{$L^n(q)$} is a~language of prefixes of trees accepted from $L(q)$ with height up to $n$
+			\item \hlbl{Refinement}: By increasing the height
+			\item \hlbl{Exclusion of CE}: No
+		\end{itemize}
+
+	    \item \hlgr{Predicate Abstraction}
+		\begin{itemize}
+			\item Consider a set of predicates $P=\{p_1,\ldots,p_n\}$,
+				equivalence $\sim_P$ is defined as
+				\hlrd{$$q_1 \sim_P q_2 \stackrel{DEF}{\equiv} \forall p\in P: L(q_1) \cap p \neq \emptyset \Leftrightarrow L(q_2) \cap p \neq \emptyset$$}
+			\item \hlbl{Refinement}: Interpolating predicates from CE
+			\item \hlbl{Exclusion of CE}: Yes
+		\end{itemize}
+	\end{itemize}
+
+
+\end{frame}
+
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Backward run with Forest Automata}
+		\begin{itemize}
+		\item \hlgr{Ingredients for backward run}:
+		\begin{itemize}
+			\item Reversion of \hlbl{abstract transformations}
+			\begin{center}
+				\includegraphics[scale=0.4]{ex/at.pdf}
+			\end{center}
+			\item Reversion of \hlbl{abstraction} $\rightarrow$ intersection of forest automata
+			\item FA intersection is done component-wise using tree automata intersection
+		\end{itemize}
+		\item \hlgr{Ingredients for predicate abstraction}:
+		\begin{itemize}
+			\item Predicates represented by tree automata
+			\item Perform intersection of each tree automaton of FA with all predicate automata
+			\item Obtain a labelling of FA states by predicate automata states
+			\item Collapses the states with the same labelling
+		\end{itemize}
+	\end{itemize}
+
+\end{frame}
+
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Boxes}
+
+\begin{itemize}
+		\item We use \hlbl{boxes} to extend expressive power of forest automata
+		\item A box is a forest automaton that can be used as a symbol of another forest automaton
+		\item A box represents repeating subgraphs of a heap
+		\item FA having boxes in alphabet are called \hlbl{hierarchical}
+	\end{itemize}
+		\vspace{-0.8cm}
+		\centering \input{figs/dll_decomp2.tikz}\\
+		\vspace{0.7cm}
+		\centering DLS $=$ \input{figs/dll_box.tikz}\\
+		\vspace{-0.8cm}
+		\centering \input{figs/dll_decomp_aut.tikz}
+\end{frame}
+
+%*******************************************************************************
+
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Backward run with Hierarchical Forest Automata}
+	
+		   	\begin{itemize}
+				\item To enable component-wise hierarchical FA intersection
+					so called \hlbl{compatible form} of forest automata is needed:
+				\begin{itemize}
+					\item They have same number of TA
+					\item \hlbl{The same subgraphs are folded into the same boxes}
+				\end{itemize}
+			\end{itemize}
+
+	\begin{center}
+		\includegraphics[scale=0.4]{ex/cp.pdf}
+	\end{center}
+
+\end{frame}
+%*******************************************************************************
+
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Intersection with Hierarchical Forest Automata}
+
+  	\begin{itemize}
+	\item \hlbl{Intersection of FA} is done:
+		  	\begin{itemize}
+				\item Component-wise using tree automata intersection
+				\item When TA intersection reaches boxes in the transitions of both automata it calls the whole
+					procedure for \hlbl{FA intersection recursively on the boxes} and uses its results as a new box
+			\end{itemize}
+	\end{itemize}
+	\begin{center}
+		\includegraphics[scale=0.4]{ex/is.pdf}
+	\end{center}
+
+\end{frame}
+%*******************************************************************************
+
+%*******************************************************************************
+\begin{frame}
+\frametitle{Experimental Evaluation}
+
+	\begin{center}
+	\begin{adjustbox}{max height=\textheight, max width=\textwidth}
+	%\tiny
+	%\caption{Results of experiments.}
+	\begin{tabular}{| l | l | r | r | r | r || l | l | r | r | r | r | r |}
+        \hline
+		Program & Status & LoC & Time [s] & Refnm& Preds & Program & Status & LoC & Time [s] & Refnm & Preds \\
+        \hline
+        \hline
+		SLL (delete) & \safe & $33$ & $0.02$ &  $0$ & $0$ & DLL (rev) & \safe & $39$ &  $0.70$ & $0$  & $0$ \\
+        \hline
+		SLL (bubblesort) & \safe & $42$ & $0.02$ &  $0$ & $0$ & CDLL & \safe & $32$ &  $0.02$  & $0$  & $0$ \\
+        \hline
+		SLL (insersort) & \safe & $36$ & $0.04$ & $0$ & $0$ & DLL (insersort) & \safe & $42$ &  $0.56$  & $0$  & $0$ \\
+        \hline
+		SLLOfCSLL & \safe & $47$ & $0.02$ & $0$ & $0$ & DLLOfCDLL & \safe & $54$ &  $1.76$  & $0$  & $0$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{SLL01}    & \safe & $70$ & $1.20$   &  $1$ & $1$ & \textbf{DLL01} & \safe & $73$ &  $0.65$  & $2$  & $2$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{CircularSLL} & \safe & $49$ & $3.57$   &  $3$  & $3$ & \textbf{CircularDLL} & \safe  & $52$ &  $37.22$ & $18$ & $24$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{OptPtrSLL}   & \safe & $59$ & $1.90$ & $3$ & $3$ & \textbf{OptPtrDLL} & \safe & $62$ &  $1.87$  & $5$ & $5$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{QueueSLL}    & \safe & $71$ & $11.32$  &  $10$ & $10$ & \textbf{QueueDLL} & \safe  & $74$ &  $44.68$ & $14$ & $14$ \\
+		\rowcolor{rowgray}
+        \hline
+		\textbf{GBSLL}       & \safe & $64$ & $0.84$   &  $3$ & $3$ & \textbf{GBDLL} & \safe & $71$ &  $1.89$  & $4$ & $4$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{GBSLLSent}   & \safe  & $68$ & $0.85$   &  $3$ & $3$ & \textbf{GBDLLSent} & \safe & $75$ &  $2.19$  & $4$ & $4$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{RGSLL}       & \safe & $72$ & $14.41$  &  $22$  & $38$ & \textbf{RGDLL} & \safe & $76$ &  $78.76$ & $26$ & $26$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{WBSLL}       & \safe & $62$ & $0.84$   &  $5$  & $5$ & \textbf{WBDLL} & \safe & $71$ &  $1.37$  & $7$ & $7$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{SortedSLL}   & \safe & $76$ & $227.12$ &  $15$ & $15$ & \textbf{SortedDLL} & \safe & $82$ &  $36.67$ & $11$ & $11$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{EndSLL}      & \safe  & $45$ & $0.07$   &  $2$  & $2$ & \textbf{EndDLL} & \safe & $49$ &  $0.10$  & $3$ & $3$ \\
+        \hline
+		\rowcolor{rowgray}
+		\textbf{TreeRB} & \unsafe & $130$ &  $0.08$  & $0$  & $0$ & \textbf{TreeWB} & \unsafe & $125$ &  $0.05$  & $0$ & $0$ \\
+        \hline
+		TreeCnstr & \safe & $52$ & $0.31$  & $0$  & $0$ & \cellcolor{rowgray}\textbf{TreeCnstr} & \cellcolor{rowgray}\unsafe & \cellcolor{rowgray} $52$ & \cellcolor{rowgray} $0.03$  & \cellcolor{rowgray} $0$ & \cellcolor{rowgray} $0$ \\
+        \hline
+		TreeOfCSLL & \safe & $109$ &  $0.57$  & $0$  & $0$ & \cellcolor{rowgray}\textbf{TreeOfCSLL}  & \cellcolor{rowgray}\unsafe & \cellcolor{rowgray} $109$ & \cellcolor{rowgray} $0.56$  & \cellcolor{rowgray} $1$ & \cellcolor{rowgray} $3$ \\
+        \hline
+		TreeStack & \safe & $58$ &  $0.20$  & $0$  & $0$ & \cellcolor{rowgray}\textbf{TreeStack} & \cellcolor{rowgray}\unsafe & \cellcolor{rowgray} $58$ & \cellcolor{rowgray} $0.01$  & \cellcolor{rowgray} $0$ & \cellcolor{rowgray} $0$ \\
+        \hline
+		TreeDsw   & \safe & $72$ & $1.87$  & $0$  & $0$ & \cellcolor{rowgray}\textbf{TreeDsw} & \cellcolor{rowgray}\unsafe & \cellcolor{rowgray} $72$ & \cellcolor{rowgray} $0.02$  & \cellcolor{rowgray} $0$ &  \cellcolor{rowgray} $0$ \\
+		\hline
+		TreeRootPtr & \safe & $62$ &  $1.43$  & $0$  &  $0$ & \cellcolor{rowgray}\textbf{TreeRootPtr} & \cellcolor{rowgray}\unsafe & \cellcolor{rowgray} $62$ & \cellcolor{rowgray} $0.17$  & \cellcolor{rowgray} $2$ & \cellcolor{rowgray} $6$\\
+        \hline
+		SkipList    & \safe & $84$ & $3.36$  & $0$  & $0$ & \cellcolor{rowgray}\textbf{SkipList} & \cellcolor{rowgray}\unsafe & $\cellcolor{rowgray} 84$ & \cellcolor{rowgray} $0.08$  & \cellcolor{rowgray} $1$  & \cellcolor{rowgray} $1$ \\
+        \hline
+		% SkipList-3nd    & $97$ & $0.17$  & $1$  & N & x & $1$ & & & & & & & \\
+        % \hline
+	\end{tabular}
+	\label{tab:times}
+	\end{adjustbox}	
+  % \vspace{-4mm}
+  % \vspace{-8mm}
+%\end{table}
+	\end{center}
+
+\end{frame}
+%*******************************************************************************
+
+%*******************************************************************************
+
+\begin{frame}
+  \frametitle{Conclusions}
+
+  \begin{itemize}
+	  \item \hlgr{Contribution:}
+		\begin{itemize}
+			\item Backward run and predicate abstraction for forest automata based shape analysis 
+			\item Compatible form and intersection of forest automata
+			\item Enable analysis of data structures with relation between nodes
+			\item Experimentally evaluated on number of test cases
+		\end{itemize}
+		\item \hlgr{Future work:}
+			\begin{itemize}
+				\item Find out reasons of state explosions on complicated tree structures
+			\end{itemize}
+  \end{itemize}
+\end{frame}
+%*******************************************************************************
+
+\begin{comment}
 
 %*******************************************************************************
 \begin{frame}
@@ -323,7 +625,7 @@ Refinement for Forest Automata}
 		\item We use \hlbl{boxes} to extend expressive power of forest automata
 		\item A box is a forest automaton that can be used as a symbol of another forest automaton
 		\item A box represents repeating subgraphs of a heap
-		\item FA having boxes in alphabet are called \hlbl{hirerarchical}
+		\item FA having boxes in alphabet are called \hlbl{hierarchical}
 	\end{itemize}
 		\vspace{-0.8cm}
 		\centering \input{figs/dll_decomp2.tikz}\\
@@ -611,5 +913,6 @@ Refinement for Forest Automata}
 			\end{itemize}
   \end{itemize}
 \end{frame}
+\end{comment}
 
 \end{document}
